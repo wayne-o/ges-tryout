@@ -108,7 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="MassTransit.Host.RabbitMQ.exe.config">
+    <None Include="MassTransit.Host.RabbitMQ.exe.config2">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

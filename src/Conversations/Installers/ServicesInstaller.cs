@@ -1,7 +1,9 @@
 ﻿namespace Conversations.Installers
 {
+    using System;
     using System.Linq;
 
+    using Castle.MicroKernel;
     using Castle.MicroKernel.Registration;
     using Castle.MicroKernel.SubSystems.Configuration;
     using Castle.Windsor;
@@ -13,6 +15,22 @@
 
     using Raven.Client;
     using Raven.Client.Document;
+
+    public class DomainServiceInstaller : IWindsorInstaller
+    {
+        public void Install(IWindsorContainer container,
+                            IConfigurationStore store)
+        {
+            container.Register(Component.For<IEndpoint>().UsingFactoryMethod(GetEndpoint).LifeStyle.Transient);
+        }
+
+        private static IEndpoint GetEndpoint(IKernel kernel)
+        {
+            var bus = kernel.Resolve<IServiceBus>(Keys.DomainBusName);
+            var domainService = bus.GetEndpoint(new Uri(Keys.DomainServiceEndpoint));
+            return domainService;
+        }
+    }
 
     public class ServicesInstaller : IWindsorInstaller
     {
@@ -49,7 +67,11 @@
                                                         sbc.EnableMessageTracing();
                                                         sbc.SetPurgeOnStartup(true);
                                                         sbc.Subscribe(c => c.LoadFrom(container));
-                                                    })).LifeStyle.Singleton);
+                                                    })).LifeStyle.Singleton,
+                Component.For<IBus>()
+					.UsingFactoryMethod((k, c) => 
+						new MassTransitPublisher(k.Resolve<IServiceBus>()))
+					.LifeStyle.Singleton);
             }
         }
     }

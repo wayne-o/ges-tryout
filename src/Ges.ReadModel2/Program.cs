@@ -19,9 +19,9 @@ namespace Ges.ReadModel2
 
             connection.Connect();
 
-            connection.SubscribeToStream("$et-WikiWikiWahEvent", false,
+            connection.SubscribeToStream("$et-ConversationStarted", false,
                 (subscription, @event) => Console.WriteLine("recieved!!" + @event.OriginalEvent.EventId),
-                (subscription, reason, arg3) => { }, new UserCredentials("admin", "changeit"));
+                (subscription, reason, arg3) => { Console.WriteLine("error!!!"); }, new UserCredentials("admin", "changeit"));
 
             Console.ReadLine();
         }

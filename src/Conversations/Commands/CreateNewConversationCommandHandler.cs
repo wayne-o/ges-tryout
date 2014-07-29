@@ -2,6 +2,8 @@
 
 namespace Conversations.Commands
 {
+    using System.Net;
+
     using Conversations.Domain;
 
     using EventStore.ClientAPI;
@@ -14,7 +16,9 @@ namespace Conversations.Commands
 
         public CreateNewConversationCommandHandler(IEventStoreConnection esConnection)
         {
-            this.esConnection = esConnection;
+            var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
+            connection.Connect();
+            this.esConnection = connection;
         }
 
         public void Consume(IConsumeContext<CreateNewConversation> message)

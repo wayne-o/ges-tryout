@@ -17,6 +17,8 @@
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private IWindsorContainer container;
 
+        private IBus bus;
+
         private static void Main(string[] args)
         {
             Thread.CurrentThread.Name = "Domain Service Main Thread";
@@ -48,6 +50,8 @@
             SimpleConfigurator.ConfigureForConsoleLogging();
             container = new WindsorContainer();
             container.Install(new CommandHandlerInstaller());
+
+            bus = container.Resolve<IBus>();
         }
     }
 }

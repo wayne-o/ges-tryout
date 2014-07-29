@@ -24,10 +24,10 @@
             container.AddFacility<TypedFactoryFacility>();
             var connection = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
             connection.Connect();
-            container.Register(Component.For<IEventStoreConnection>().Instance(connection));
+            container.Register(Component.For<IEventStoreConnection>().Instance(connection).LifestyleSingleton());
 
             container.Register(Classes.FromAssemblyContaining(typeof(CreateNewConversationCommandHandler)).Where(x => x.GetInterface(typeof(Consumes<>.Context).Name) != null));
-            container.Install(new IWindsorInstaller[] { new ServicesInstaller(Keys.DomainEndpoint) });
+            container.Install(new IWindsorInstaller[] { new ServicesInstaller(Keys.DomainServiceEndpoint), new DomainServiceInstaller(),  });
 
             
         }
