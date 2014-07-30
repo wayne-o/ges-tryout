@@ -103,10 +103,10 @@ namespace Ges.ReadModel
             try
             {
                 var headers =
-               JsonConvert.DeserializeObject<Dictionary<string, object>>(
-                   Encoding.UTF8.GetString(originalEvent.Metadata), Constants.JsonSerializerSettings);
+                JsonConvert.DeserializeObject<Dictionary<string, object>>(Encoding.UTF8.GetString(originalEvent.Metadata), Constants.JsonSerializerSettings);
                 object data = null;
                 string eventClrTypeName = string.Empty;
+
                 try
                 {
                     data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(originalEvent.Data), Constants.JsonSerializerSettings);
