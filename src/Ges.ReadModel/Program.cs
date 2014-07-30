@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ges.ReadModel
 {
+    using System.Diagnostics;
     using System.Net;
     using System.Reflection;
 
@@ -18,6 +19,8 @@ namespace Ges.ReadModel
 
     using EventStore.ClientAPI;
     using EventStore.ClientAPI.SystemData;
+
+    using MassTransit;
 
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -51,17 +54,40 @@ namespace Ges.ReadModel
             connection.SubscribeToAll(
                 false,
                 (subscription, @event) =>
+                {
+                    try
                     {
                         Console.WriteLine("recieved!!" + @event.OriginalEvent.EventId);
                         var processedEvent = ProcessRawEvent(@event);
 
-                        var t = Type.GetType(processedEvent.EventClrTypeName);
+                        if (processedEvent != null && processedEvent.Data != null)
+                        {
+                            var t = Type.GetType(processedEvent.EventClrTypeName);
 
-                        var type = typeof(IHandlesEvent<>).MakeGenericType(t);
+                            var type = typeof(IHandlesEvent<>).MakeGenericType(t);
 
-                        var allHandlers = container.ResolveAll(type);
-                    },
-                    (subscription, reason, arg3) => { Console.WriteLine("error!!!"); }, new UserCredentials("admin", "changeit"));
+                            var allHandlers = container.ResolveAll(type);
+
+
+                            foreach (var allHandler in allHandlers)
+                            {
+                                var method = allHandler.GetType().GetMethod("Consume", new[] { t });
+                                Console.WriteLine(JsonConvert.DeserializeObject(processedEvent.Data.ToString()));
+                                method.Invoke(allHandler, new[] { JsonConvert.DeserializeObject(processedEvent.Data.ToString(), t) });
+                            }
+                        }
+                    }
+                    catch (Exception exc)
+                    {
+                        Console.WriteLine(exc.Message);
+                    }
+                },
+                (subscription, reason, arg3) =>
+                    {
+                        Console.WriteLine("error!!!");
+                        Console.WriteLine(reason);
+                        Console.WriteLine(subscription.StreamId);
+                    }, new UserCredentials("admin", "changeit"));
 
             //connection.SubscribeToStream("$et-ConversationStarted", false,
             //    (subscription, @event) => Console.WriteLine("recieved!!" + @event.OriginalEvent.EventId),

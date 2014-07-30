@@ -12,11 +12,6 @@ namespace Conversations.Commands
             this.Conversation = data;
         }
 
-        public CreateNewConversation()
-        {
-
-        }
-
         public ConversationDto Conversation { get; set; }
 
         public Guid Id { get; private set; }

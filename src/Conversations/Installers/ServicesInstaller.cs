@@ -56,22 +56,17 @@
             if (!container.ResolveAll<IServiceBus>().Any())
             {
                 container.Register(
-                        Component
-                        .For<IServiceBus>()
-                        .UsingFactoryMethod(() =>
-                            ServiceBusFactory.New(sbc =>
-                                                    {
-                                                        sbc.ReceiveFrom(endpoint);
-                                                        sbc.UseRabbitMq();
-                                                        sbc.UseNLog();
-                                                        sbc.EnableMessageTracing();
-                                                        sbc.SetPurgeOnStartup(true);
-                                                        sbc.Subscribe(c => c.LoadFrom(container));
-                                                    })).LifeStyle.Singleton,
-                Component.For<IBus>()
-					.UsingFactoryMethod((k, c) => 
-						new MassTransitPublisher(k.Resolve<IServiceBus>()))
-					.LifeStyle.Singleton);
+                    Component.For<IServiceBus>().UsingFactoryMethod(
+                        () => ServiceBusFactory.New(
+                            sbc =>
+                                {
+                                    sbc.ReceiveFrom(endpoint);
+                                    sbc.UseRabbitMq();
+                                    sbc.UseNLog();
+                                    sbc.EnableMessageTracing();
+                                    sbc.SetPurgeOnStartup(true);
+                                    sbc.Subscribe(c => c.LoadFrom(container));
+                                })).LifeStyle.Singleton);
             }
         }
     }

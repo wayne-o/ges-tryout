@@ -6,6 +6,8 @@
 
     using EventStore.ClientAPI;
 
+    using MassTransit;
+
     using NLog;
     using NLog.Config;
 
@@ -17,7 +19,7 @@
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private IWindsorContainer container;
 
-        private IBus bus;
+        private IServiceBus bus;
 
         private static void Main(string[] args)
         {
@@ -51,7 +53,7 @@
             container = new WindsorContainer();
             container.Install(new CommandHandlerInstaller());
 
-            bus = container.Resolve<IBus>();
+            bus = container.Resolve<IServiceBus>();
         }
     }
 }

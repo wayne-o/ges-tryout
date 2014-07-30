@@ -26,11 +26,9 @@ namespace Conversations.Commands
             var repo = new GetEventStoreRepository.GetEventStoreRepository(esConnection);
 
             var id = Guid.NewGuid();
-            var testAggregate = new Conversation(id);
-            testAggregate.ProduceEvents(10);
-            testAggregate.ProduceWikiWahEvents(20);
+            var conversation = new Conversation(id, message.Message.Conversation.Subject, message.Message.Conversation.Body);
 
-            repo.Save(testAggregate, Guid.NewGuid(), d => { });
+            repo.Save(conversation, Guid.NewGuid(), d => { });
         }
     }
 }
