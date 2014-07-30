@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ges.ReadModel", "src\Ges.ReadModel\Ges.ReadModel.csproj", "{4F62127B-86C3-45BE-822F-8DF59B31CF9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ges.ReadModel2", "src\Ges.ReadModel2\Ges.ReadModel2.csproj", "{22BDE983-9138-4197-AF54-C3211794BD84}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetEventStoreRepository", "lib\getting-started-with-event-store\src\GetEventStoreRepository\GetEventStoreRepository.csproj", "{68568F4B-6637-418E-8C28-C692F811ED42}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Conversations.Api", "src\Conversations.Api\Conversations.Api.csproj", "{D5D73C33-BADF-441A-BE56-242A9E23769E}"
@@ -32,10 +30,6 @@ Global
 		{4F62127B-86C3-45BE-822F-8DF59B31CF9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F62127B-86C3-45BE-822F-8DF59B31CF9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F62127B-86C3-45BE-822F-8DF59B31CF9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22BDE983-9138-4197-AF54-C3211794BD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22BDE983-9138-4197-AF54-C3211794BD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22BDE983-9138-4197-AF54-C3211794BD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22BDE983-9138-4197-AF54-C3211794BD84}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68568F4B-6637-418E-8C28-C692F811ED42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68568F4B-6637-418E-8C28-C692F811ED42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68568F4B-6637-418E-8C28-C692F811ED42}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -105,6 +105,7 @@
     <Compile Include="Dto\ConversationDto.cs" />
     <Compile Include="Events\ConversationDenormalizer.cs" />
     <Compile Include="Events\ConversationStarted.cs" />
+    <Compile Include="Events\DenormalizedConversation.cs" />
     <Compile Include="Extensions\ForString.cs" />
     <Compile Include="Installers\Keys.cs" />
     <Compile Include="Installers\ServicesInstaller.cs" />

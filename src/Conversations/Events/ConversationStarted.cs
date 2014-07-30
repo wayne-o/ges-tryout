@@ -5,7 +5,7 @@
     /// <summary>
     /// The conversation started.
     /// </summary>
-    public class ConversationStarted 
+    public class ConversationStarted : IDomainEvent
     {
         public ConversationStarted(Guid aggregateId)
         {
@@ -13,5 +13,11 @@
         }
 
         public Guid AggregateId { get; private set; }
+
+        public uint Version { get; set; }
+
+        public string Body { get; set; }
+
+        public string Subject { get; set; }
     }
 }

@@ -19,6 +19,8 @@ namespace Ges.ReadModel2
 
             connection.Connect();
 
+            //container.Register(AllTypes.FromAssemblyContaining<Dto>().BasedOn(typeof(IHandlesEvent<>)));
+
             connection.SubscribeToStream("$et-ConversationStarted", false,
                 (subscription, @event) => Console.WriteLine("recieved!!" + @event.OriginalEvent.EventId),
                 (subscription, reason, arg3) => { Console.WriteLine("error!!!"); }, new UserCredentials("admin", "changeit"));

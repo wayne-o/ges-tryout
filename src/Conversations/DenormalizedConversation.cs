@@ -1,8 +1,11 @@
 namespace Conversations
 {
     using System;
+    using System.Collections.Generic;
 
     using MassTransit;
+
+    using Newtonsoft.Json;
 
     using RabbitMQ.Client.Impl;
 
@@ -68,5 +71,48 @@ namespace Conversations
         {
             _Bus.Publish(message);
         }
+    }
+
+    public interface IHandlesEvent<T> : Consumes<T>.All
+        where T : class, IDomainEvent
+    {
+    }
+
+    public interface IDomainEvent
+    {
+        /// <summary>
+        /// Gets the aggregate root id of the domain event.
+        /// </summary>
+        Guid AggregateId { get;}
+
+        /// <summary>
+        /// Gets or sets the version of the aggregate which this event corresponds to.
+        /// E.g. CreateNewCustomerCommand would map to (:NewCustomerCreated).Version = 1,
+        /// as that event corresponds to the creation of the customer.
+        /// </summary>
+        uint Version { get; set; }
+    }
+
+    public class EventMessage<T>
+    {
+        public Guid EventId { get; set; }
+
+        public string StreamName { get; set; }
+
+        public int EventNumber { get; set; }
+
+        public string EventType { get; set; }
+
+        public Dictionary<string, object> MetaData { get; set; }
+
+        public T Data { get; set; }
+
+        public string EventClrTypeName { get; set; }
+    }
+
+    public class Constants
+    {
+        public static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
+
     }
 }
