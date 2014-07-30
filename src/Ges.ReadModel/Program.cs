@@ -63,11 +63,8 @@ namespace Ges.ReadModel
                         if (processedEvent != null && processedEvent.Data != null)
                         {
                             var t = Type.GetType(processedEvent.EventClrTypeName);
-
                             var type = typeof(IHandlesEvent<>).MakeGenericType(t);
-
                             var allHandlers = container.ResolveAll(type);
-
 
                             foreach (var allHandler in allHandlers)
                             {
@@ -83,15 +80,11 @@ namespace Ges.ReadModel
                     }
                 },
                 (subscription, reason, arg3) =>
-                    {
-                        Console.WriteLine("error!!!");
-                        Console.WriteLine(reason);
-                        Console.WriteLine(subscription.StreamId);
-                    }, new UserCredentials("admin", "changeit"));
-
-            //connection.SubscribeToStream("$et-ConversationStarted", false,
-            //    (subscription, @event) => Console.WriteLine("recieved!!" + @event.OriginalEvent.EventId),
-            //    (subscription, reason, arg3) => { Console.WriteLine("error!!!"); }, new UserCredentials("admin", "changeit"));
+                {
+                    Console.WriteLine("error!!!");
+                    Console.WriteLine(reason);
+                    Console.WriteLine(subscription.StreamId);
+                }, new UserCredentials("admin", "changeit"));
 
             Console.ReadLine();
         }
@@ -107,25 +100,42 @@ namespace Ges.ReadModel
 
         static EventMessage<object> DeserializeEvent(RecordedEvent originalEvent)
         {
-            var headers =
-                JsonConvert.DeserializeObject<Dictionary<string, object>>(
-                    Encoding.UTF8.GetString(originalEvent.Metadata), Constants.JsonSerializerSettings);
-            var data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(originalEvent.Data),
-                                                     Constants.JsonSerializerSettings);
-            var eventClrTypeName = headers["EventClrTypeName"].ToString();
-
-            var e = new EventMessage<object>
+            try
             {
-                EventId = originalEvent.EventId,
-                StreamName = originalEvent.EventStreamId,
-                EventNumber = originalEvent.EventNumber,
-                EventType = originalEvent.EventType,
-                EventClrTypeName = eventClrTypeName,
-                MetaData = headers,
-                Data = data,
-            };
+                var headers =
+               JsonConvert.DeserializeObject<Dictionary<string, object>>(
+                   Encoding.UTF8.GetString(originalEvent.Metadata), Constants.JsonSerializerSettings);
+                object data = null;
+                string eventClrTypeName = string.Empty;
+                try
+                {
+                    data = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(originalEvent.Data), Constants.JsonSerializerSettings);
+                    eventClrTypeName = headers["EventClrTypeName"].ToString();
+                }
+                catch (Exception)
+                {
+                }
 
-            return e;
+                var e = new EventMessage<object>
+                {
+                    EventId = originalEvent.EventId,
+                    StreamName = originalEvent.EventStreamId,
+                    EventNumber = originalEvent.EventNumber,
+                    EventType = originalEvent.EventType,
+                    EventClrTypeName = eventClrTypeName,
+                    MetaData = headers,
+                    Data = data,
+                };
+
+                return e;
+            }
+            catch (Exception exc)
+            {
+                Console.WriteLine("static EventMessage<object> DeserializeEvent(RecordedEvent originalEvent)");
+                Console.WriteLine(exc.Message);
+            }
+
+            return null;
         }
     }
 }
