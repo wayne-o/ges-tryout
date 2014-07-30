@@ -28,6 +28,13 @@ namespace Ges.ReadModel
     using Raven.Client;
     using Raven.Client.Document;
 
+    public class EventStorePosition
+    {
+        public string Id { get; set; }
+        public long PreparePosition { get; set; }
+        public long CommitPosition { get; set; }
+    }
+
     class Program
     {
         static void Main(string[] args)
@@ -51,7 +58,25 @@ namespace Ges.ReadModel
 
             container.Register(Component.For<IDocumentStore>().Instance(rdb));
 
-            connection.SubscribeToAll(
+            EventStorePosition position = null;
+
+            using (var session = container.Resolve<IDocumentStore>().OpenSession())
+            {
+                position = session.Load<EventStorePosition>("EventStorePostitions-0");
+            }
+
+            if (position == null)
+            {
+                position = new EventStorePosition()
+                {
+                    Id = "EventStorePostitions-0",
+                    CommitPosition = 0,
+                    PreparePosition = 0
+                };
+            }
+
+            connection.SubscribeToAllFrom(
+                new Position(position.CommitPosition, position.PreparePosition),
                 false,
                 (subscription, @event) =>
                 {
@@ -72,12 +97,27 @@ namespace Ges.ReadModel
                                 Console.WriteLine(JsonConvert.DeserializeObject(processedEvent.Data.ToString()));
                                 method.Invoke(allHandler, new[] { JsonConvert.DeserializeObject(processedEvent.Data.ToString(), t) });
                             }
+
+                            using (var session = container.Resolve<IDocumentStore>().OpenSession())
+                            {
+                                session.Store(new EventStorePosition
+                                {
+                                    Id = "EventStorePostitions-0",
+                                    CommitPosition = @event.OriginalPosition.Value.CommitPosition,
+                                    PreparePosition = @event.OriginalPosition.Value.PreparePosition
+                                });
+                                session.SaveChanges();
+                            }
                         }
                     }
                     catch (Exception exc)
                     {
                         Console.WriteLine(exc.Message);
                     }
+                },
+                (subscription) =>
+                {
+                    Console.WriteLine("Live!!!");
                 },
                 (subscription, reason, arg3) =>
                 {
